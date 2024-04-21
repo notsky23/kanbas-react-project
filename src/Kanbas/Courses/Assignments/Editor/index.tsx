@@ -73,7 +73,7 @@ function AssignmentEditor() {
                 // Display toast and navigate after a short delay
                 toast('Update successful.', { 
                     type: 'success',
-                    autoClose: 2000 
+                    autoClose: 1000 
                 });
                 setTimeout(() => {
                     navigate(`/Kanbas/Courses/${courseId}/Assignments`);

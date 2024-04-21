@@ -34,7 +34,6 @@ function Assignments() {
             setAssignments(prevAssignments => prevAssignments.filter(assignment => assignment._id !== assignmentId));
             // Optionally, update redux state if needed
             dispatch(deleteAssignmentRedux(assignmentId));
-            alert("Assignment deleted successfully.");
         }
     };
 
