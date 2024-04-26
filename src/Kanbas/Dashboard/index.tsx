@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from "react";
 import DashboardModal from "./DashboardModal";
 import { Link } from "react-router-dom";
-import * as db from "../Database";
 import './index.css';
 import { FaPlusCircle, FaMinusCircle, FaEdit } from "react-icons/fa";
 import { IoNavigateCircle } from "react-icons/io5";
 import { Course } from "../../Kanbas";
+
+// import React, {useState, useEffect} from "react";
+// import * as db from "../Database";
 
 function Dashboard(
   { courses, addOrEditCourse, updateCourse, editingCourse, setEditingCourse, deleteCourse, isModalOpen, setIsModalOpen } :
@@ -37,7 +38,7 @@ function Dashboard(
             <div key={course._id} className="col" style={{ width: 305 }}>
               <div className="card">
                 <img src={`/images/${course.image}`} className="card-img-top"
-                     style={{ height: 150 }}/>
+                     style={{ height: 150 }} alt={`Cover image for ${course.name}`} />
                 <div className="card-body">
                     <Link className="card-title" to={`/Kanbas/Courses/${course._id}/Home`}
                         style={{ textDecoration: "none", color: "navy", fontWeight: "bold" }}>

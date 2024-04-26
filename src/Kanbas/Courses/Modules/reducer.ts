@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { ModulesState } from "./moduleTypes";
+
 // import { modules } from "../../Database";
-import { Module, ModulesState } from "./moduleTypes";
 
 const initialState: ModulesState = {
     modules: [],

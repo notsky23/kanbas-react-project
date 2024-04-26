@@ -69,7 +69,7 @@ export default function UserTable() {
     // Update a user
     const updateUser = async () => {
         try {
-            const status = await client.updateUser(user);
+            await client.updateUser(user);
             setUsers(users.map((u) => (u._id === user._id ? user : u)));
             // alert('Profile updated successfully!'); // Simple alert to notify user
             toast.success('Profile updated successfully!');

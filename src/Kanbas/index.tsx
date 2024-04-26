@@ -1,16 +1,22 @@
-import { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
 import KanbasNavigation from "./Navigation";
 import Dashboard from "./Dashboard";
 import Courses from "./Courses";
 import Account from "./Account";
-// import * as db from "./Database";
 import TopMenuBar from "./TopMenuBar";
-import axios from "axios";
-import * as client from "./Dashboard/client";
+import * as courseClient from "./Dashboard/client";
 import { NotificationProvider } from "./NotificationContext";
+import { useAuth } from '../Users/AuthContext';
+// import LoadingScreen from "./LoadingScreen";
+
+// import * as db from "./Database";
+// import axios from "axios";
+
+console.log('Current API Base URL:', process.env.REACT_APP_API_BASE);
+const API_BASE = process.env.REACT_APP_API_BASE?.replace(/\/+$/, "");
 
 export interface Course {
    _id: string;
@@ -22,27 +28,27 @@ export interface Course {
    semester: string;
    sem: string;
    image: string;
- }
-
- 
-console.log('Current API Base URL:', process.env.REACT_APP_API_BASE);
-const API_BASE = process.env.REACT_APP_API_BASE?.replace(/\/+$/, "");
+}
 
 function Kanbas() {
    // const COURSES_API = "http://localhost:4000/api/courses";
-   // const COURSES_API = "https://kanbas-node-server-app-vvg4.onrender.com/api/courses";
    // const COURSES_API = "https://kanbas-node-server-app-vmbu.onrender.com/api/courses";
    const COURSES_API = `${API_BASE}/api/courses`;
    const [courses, setCourses] = useState<any[]>([]);
    const [editingCourse, setEditingCourse] = useState<Course | null>(null);
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [lastVisitedCourseId, setLastVisitedCourseId] = useState<string | null>(null);
+   const [loadingCourses, setLoadingCourses] = useState(false);
+
+   const { user, loading, isPublicRoute } = useAuth();
+   const navigate = useNavigate();
 
    // Read/Retrieve all the courses to be displayed in the Dashboard
-   const fetchCourses = async () => {
+   const fetchCourses = useCallback(async () => {
+      setLoadingCourses(true);
       try {
          console.log(`Making API call to: ${COURSES_API}`);
-         const fetchedCourses: Course[] = await client.findAllCourses();
+         const fetchedCourses: Course[] = await courseClient.findAllCourses();
          const formattedCourses = fetchedCourses.map((course: Course) => ({
             ...course,
             startDate: new Date(course.startDate).toISOString().split('T')[0],  // Converts to YYYY-MM-DD format
@@ -51,19 +57,28 @@ function Kanbas() {
          setCourses(formattedCourses);
       } catch (error) {
          console.error('Failed to fetch courses:', error);
+      } finally {
+         setLoadingCourses(false);
       }
-   };
-   useEffect(() => {fetchCourses();}, []);
+   }, [user]);
+   useEffect(() => {fetchCourses();}, [fetchCourses]);
+
+   useEffect(() => {
+      if (!loading && !user && !isPublicRoute()) {
+          console.log("No user logged in, redirecting to sign-in.");
+          navigate("/Kanbas/Account/Signin");
+      }
+   }, [user, loading, isPublicRoute]);
 
    const addOrEditCourse = async (newCourseData: any) => {
       try {
         if (editingCourse) {
-          const updatedCourse = await client.updateCourse(editingCourse._id, newCourseData);
+          const updatedCourse = await courseClient.updateCourse(editingCourse._id, newCourseData);
           setCourses(courses => courses.map(course => course._id === editingCourse._id ? updatedCourse : course));
           setIsModalOpen(false);
           setEditingCourse(null);
         } else {
-          const newCourse = await client.createCourse(newCourseData);
+          const newCourse = await courseClient.createCourse(newCourseData);
           setCourses(courses => [...courses, newCourse]);
         }
         setIsModalOpen(false);
@@ -80,12 +95,14 @@ function Kanbas() {
 
    const deleteCourse = async (courseId: string) => {
       try {
-         await client.deleteCourse(courseId);
+         await courseClient.deleteCourse(courseId);
          setCourses(courses.filter((c) => c._id !== courseId));
       } catch (error) {
          console.error('Failed to delete course:', error);
       }
    };
+
+   // if (loadingCourses) return (<LoadingScreen />);
 
    return(
    <Provider store={store}>
@@ -100,7 +117,8 @@ function Kanbas() {
             </div>
             <div style={{ flexGrow: 1, maxWidth: '100%' }}>
                <Routes>
-                  <Route path="/" element={<Navigate to="Dashboard" />} />
+                  {/* <Route path="/" element={<Navigate to="Account" />} /> */}
+                  <Route path="/" element={user ? <Navigate to="Dashboard" /> : <Navigate to="Account" />} />
                   <Route path="Account/*" element={<Account />} />
                   <Route path="Dashboard" element={
                      <Dashboard

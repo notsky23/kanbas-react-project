@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FaCheckCircle, FaEllipsisV, FaPlusCircle, FaPlus } from "react-icons/fa";
 import { Link, useParams, useNavigate } from "react-router-dom";
-// import { assignments } from "../../Database";
-import { useSelector, useDispatch } from "react-redux";
-import { KanbasState } from "../../store";
+import { useDispatch } from "react-redux";
 import { deleteAssignment as deleteAssignmentRedux } from "./reducer"
 import {
     findAssignmentsForCourse,
     deleteAssignment as deleteAssignmentService,
 } from "./client";
 import { Assignment } from "./assignmentTypes";
+
+// import { KanbasState } from "../../store";
+// import { assignments } from "../../Database";
 
 function Assignments() {
     const { courseId } = useParams();

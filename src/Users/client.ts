@@ -15,21 +15,45 @@ export interface User {
     role: string;
 };
 
+// Sign up a new user
 export const signup = async (user: any) => {
     const response = await axios.post(`${USERS_API}/signup`, user);
     return response.data;
 };
+// Sign in a user
 export const signin = async (credentials: User) => {
-    const response = await axios.post(`${USERS_API}/signin`, credentials);
+    const response = await axios.post(`${USERS_API}/signin`, credentials, { withCredentials: true });
     return response.data;
 };
+// Sign out a user
 export const signout = async () => {
     const response = await axios.post(`${USERS_API}/signout`);
     return response.data;
 }
+// Retrieve the user's profile
 export const profile = async () => {
     const response = await axios.post(`${USERS_API}/profile`);
     return response.data;
+};
+// Check the user's session
+export const checkSession = async () => {
+    try {
+        const response = await axios.get(`${USERS_API}/checkSession`, { withCredentials: true });
+        return response.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 401) {
+                // Handle 401 specifically
+                return { user: null };
+            } else {
+                // Handle other kinds of errors
+                throw error;
+            }
+        } else {
+            // If it's not an AxiosError, it might be some other error (like a network or runtime error)
+            throw new Error('An unexpected error occurred');
+        }
+    }
 };
 
 // Create a new user

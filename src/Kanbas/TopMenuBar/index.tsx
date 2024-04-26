@@ -12,7 +12,7 @@ function TopMenuBar({ courses = [] }: { courses: Course[] }) {
     const modalRef = useRef<HTMLDivElement | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const isCoursesPage = location.pathname.includes("/Courses");
-    const courseNumber = courses.find(course => location.pathname.includes(course._id))?.number;
+    // const courseNumber = courses.find(course => location.pathname.includes(course._id))?.number;
 
     // Define toggles here to be used both for opening and closing the modal and dropdown
     const toggleModal = () => setIsModalOpen(!isModalOpen);

@@ -70,7 +70,7 @@ function ModuleList() {
     client.deleteModule(moduleId).then(() => {
       dispatch(deleteModule(moduleId));
       setIsEditMode(false);
-    }). catch((error) => {
+    }).catch((error) => {
       console.error('Failed to delete module:', error);
     });
   };

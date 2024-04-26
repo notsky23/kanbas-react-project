@@ -1,55 +1,68 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import { FaCheckCircle, FaEllipsisV } from "react-icons/fa";
 import {
-    createAssignment,
-    updateAssignment,
-    findAssignmentById
+    createQuiz,
+    updateQuiz,
+    findQuizById
 } from "../client";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // import { useSelector, useDispatch } from "react-redux";
-// import { assignments } from "../../../Database";
+// import { quizzes } from "../../../Database";
 // import { KanbasState } from "../../../store";
 // import { useNotification } from "../../../NotificationContext";
 
-function AssignmentEditor() {
+function QuizEditor() {
     const formatDate = (dateString: string | undefined) => {
         return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
     };
 
-    const { courseId, assignmentId } = useParams();
+    const { pathname } = useLocation();
+    const { courseId, quizId } = useParams();
     const navigate = useNavigate();
 
-    const [assignment, setAssignment] = useState({
-        title: 'New Title',
-        description: 'New Description',
-        points: 100,
-        dueDate: '',
-        availableFromDate: '',
-        availableUntilDate: '',
+    const [quiz, setQuiz] = useState({
+        title: "New Quiz",
+        course: "",
+        description: "New Description",
+        quiztype: "Quizzes",
+        points: 0,
+        assignmentGroup: "",
+        shuffleAnswers: true,
+        timeLimit: 20,
+        MultipleAttempts: false,
+        viewResponses: "Always",
+        showCorrectAnswers: "Immediately",
+        accessCode: "",
+        oneQuestionAtATime: true,
+        webcamRequired: false,
+        lockQuestionsAfterAnswering: false,
+        dueDate: "",
+        availableDate: "",
+        untilDate: "",
     });
 
     useEffect(() => {
-        if (courseId && assignmentId && assignmentId !== 'New') {
-            findAssignmentById(courseId, assignmentId)
-                .then(fetchedAssignment => {
-                    setAssignment({
-                        ...fetchedAssignment,
-                        dueDate: formatDate(fetchedAssignment.dueDate),
-                        availableFromDate: formatDate(fetchedAssignment.availableFromDate),
-                        availableUntilDate: formatDate(fetchedAssignment.availableUntilDate),
+        if (courseId && quizId && quizId !== 'New') {
+            findQuizById(courseId, quizId)
+                .then(fetchedQuiz => {
+                    setQuiz({
+                        ...fetchedQuiz,
+                        dueDate: formatDate(fetchedQuiz.dueDate),
+                        availableDate: formatDate(fetchedQuiz.availableDate),
+                        untilDate: formatDate(fetchedQuiz.untilDate),
                     });
                 })
                 .catch(console.error);
         }
-    }, [assignmentId, courseId]);
+    }, [quizId, courseId]);
 
     // Handle form field changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setAssignment(prev => ({
+        setQuiz(prev => ({
             ...prev,
             [name]: name === 'points' ? parseInt(value, 10) || 0 : value,
         }));
@@ -63,10 +76,10 @@ function AssignmentEditor() {
     
         try {
             let result;
-            if (assignmentId === 'New') {
-                result = await createAssignment(courseId, assignment);
+            if (quizId === 'New') {
+                result = await createQuiz(courseId, quiz);
             } else {
-                result = await updateAssignment({_id: assignmentId, ...assignment});
+                result = await updateQuiz({_id: quizId, ...quiz});
             }
     
             if (notifyChange) {
@@ -76,18 +89,18 @@ function AssignmentEditor() {
                     autoClose: 1000 
                 });
                 setTimeout(() => {
-                    navigate(`/Kanbas/Courses/${courseId}/Assignments`);
+                    navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
                 }, 2100); // Slightly longer than autoClose to ensure the user sees the message
             } else {
                 // Navigate immediately and then show the toast
-                navigate(`/Kanbas/Courses/${courseId}/Assignments`);
+                navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
                 setTimeout(() => {
-                    toast('Assignment saved successfully.', { type: 'success' });
+                    toast('Quiz saved successfully.', { type: 'success' });
                 }, 500); // Short delay to ensure navigation has occurred
             }
         } catch (error) {
-            console.error('Failed to save the assignment:', error);
-            toast('Failed to save assignment.', { type: 'error' });
+            console.error('Failed to save the Quiz:', error);
+            toast('Failed to save Quiz.', { type: 'error' });
         }
     };
 
@@ -107,16 +120,27 @@ function AssignmentEditor() {
 
             <hr />
 
-            <h3>Assignment Name</h3>
+            <nav className="nav nav-tabs mt-2">
+                {pathname.includes("Edit") ? (
+                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Edit`} className={`nav-link ${pathname.includes("Edit") ? "active" : ""}`}>Details</Link>
+                ) : pathname.includes("New") ? (
+                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}`} className={`nav-link ${pathname.includes("New") ? "active" : ""}`}>Details</Link>
+                ) : null}
+                
+                <Link to="/Labs/a4" className={`nav-link ${pathname.includes("Questions") ? "active" : ""}`}>Questions</Link>
+            </nav>
+
+            <br />
+
             <input
                 name="title"
-                value={assignment.title}
+                value={quiz.title}
                 onChange={handleChange}
                 className="form-control mb-3"
             />
             <textarea
                 name="description"
-                value={assignment.description}
+                value={quiz.description}
                 onChange={handleChange}
                 className="form-control mt-3"
                 style={{ maxWidth: "100%", height: "150px" }}
@@ -135,7 +159,7 @@ function AssignmentEditor() {
                             type="number"
                             min="0"
                             max="100"
-                            value={assignment?.points} onChange={handleChange}
+                            value={quiz?.points} onChange={handleChange}
                             className="form-control"
                         />
                     </div>
@@ -154,7 +178,7 @@ function AssignmentEditor() {
                                         id="due"
                                         name="dueDate"
                                         type="date"
-                                        value={assignment.dueDate}
+                                        value={quiz.dueDate}
                                         onChange={handleChange}
                                         className="form-control"
                                     />
@@ -164,9 +188,9 @@ function AssignmentEditor() {
                                         <label htmlFor="from" className="ps-1 pt-4" style={{ fontWeight: "bold" }}>Available from</label>
                                         <input
                                             id="from"
-                                            name="availableFromDate"
+                                            name="availableDate"
                                             type="date"
-                                            value={assignment.availableFromDate}
+                                            value={quiz.availableDate}
                                             onChange={handleChange}
                                             className="form-control"
                                         />
@@ -175,9 +199,9 @@ function AssignmentEditor() {
                                         <label htmlFor="until" className="ps-1 pt-4" style={{ fontWeight: "bold" }}>Until</label>
                                         <input
                                             id="until"
-                                            name="availableUntilDate"
+                                            name="untilDate"
                                             type="date"
-                                            value={assignment.availableUntilDate}
+                                            value={quiz.untilDate}
                                             onChange={handleChange}
                                             className="form-control"
                                         />
@@ -207,7 +231,7 @@ function AssignmentEditor() {
                     <button onClick={handleSave} className="btn btn-success ms-2 float-end">
                         Save
                     </button>
-                    <Link to={`/Kanbas/Courses/${courseId}/Assignments`} className="btn btn-danger float-end">
+                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes`} className="btn btn-danger float-end">
                         Cancel
                     </Link>
                 </div>
@@ -217,4 +241,4 @@ function AssignmentEditor() {
     );
 }
 
-export default AssignmentEditor;
+export default QuizEditor;

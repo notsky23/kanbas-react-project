@@ -5,9 +5,10 @@ import "./index.css";
 
 function Grades() {
   const { courseId } = useParams();
-  const validAssignmentIds = ['A101', 'A102', 'A103'];
   const as = assignments.filter((assignment) => assignment.course === courseId);
   const es = enrollments.filter((enrollment) => enrollment.course === courseId);
+
+//   const validAssignmentIds = ['A101', 'A102', 'A103'];
   
     return (
         <div className="flex-grow-1 pe-2 pe-md-4">
@@ -79,7 +80,7 @@ function Grades() {
                                                     min={0}
                                                     max={100}
                                                     onChange={(e) => 
-                                                        console.log('New grade: ${e.target.value}')
+                                                        console.log(`New grade: ${e.target.value}`)
                                                     }
                                                 />
                                             </td>
