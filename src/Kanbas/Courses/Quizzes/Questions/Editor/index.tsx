@@ -209,46 +209,6 @@ function QuizQuestionsEditor() {
         });
     };
 
-    const handleAnswerChange = (answerIndex: any, text: any) => {
-        setQuiz(prevState => {
-            const updatedQuestions = prevState.questions.map((question, index) => {
-                if (index === currentQuestionIndex) {
-                    const updatedAnswers = question.answers.map((answer, idx) => {
-                        if (idx === answerIndex) {
-                            return { ...answer, text: text };
-                        }
-                        return answer;
-                    });
-    
-                    return { ...question, answers: updatedAnswers };
-                }
-                return question;
-            });
-    
-            return { ...prevState, questions: updatedQuestions };
-        });
-    };
-    
-    const handleCorrectAnswerChange = (answerIndex: any) => {
-        setQuiz(prevState => {
-            const updatedQuestions = prevState.questions.map((question, index) => {
-                if (index === currentQuestionIndex) {
-                    const updatedAnswers = question.answers.map((answer, idx) => {
-                        if (idx === answerIndex) {
-                            return { ...answer, isCorrect: !answer.isCorrect };
-                        }
-                        return answer;
-                    });
-    
-                    return { ...question, answers: updatedAnswers };
-                }
-                return question;
-            });
-    
-            return { ...prevState, questions: updatedQuestions };
-        });
-    };
-
     return (
         <div className="flex-grow-1 pe-2 pe-md-3">
             <div className="container">
@@ -312,7 +272,6 @@ function QuizQuestionsEditor() {
                     className="btn btn-light border float-end mb-3"
                     title="Add Question"
                     style={{ height: "calc(2.25rem + 2px)", whiteSpace: "nowrap", border: "1px solid #ced4da" }}
-                    onClick={handleAddAnswer}
                 >
                         <FaPlus /> &nbsp; Add Answer
                 </button>
@@ -338,7 +297,7 @@ function QuizQuestionsEditor() {
             </div>
 
             {/* Question */}
-            <div className="container mb-5">
+            <div className="container mb-3">
                 {quiz.questions.length > 0 && (
                     <div className="mt-3">
                         <ReactQuill
@@ -348,28 +307,6 @@ function QuizQuestionsEditor() {
                         />
                     </div>
                 )}
-            </div>
-
-            {/* Answers */}
-            <div className="container-fluid mb-5">
-                {quiz.questions[currentQuestionIndex].answers.map((answer, answerIndex) => (
-                    <div key={answerIndex} className="answer-input">
-                        <input
-                            type="text"
-                            value={answer.text}
-                            onChange={e => handleAnswerChange(answerIndex, e.target.value)}
-                            placeholder="Type answer here"
-                            className="form-control mb-2"
-                        />
-                        <input
-                            type="checkbox"
-                            checked={answer.isCorrect}
-                            className="mx-2 mt-2"
-                            onChange={() => handleCorrectAnswerChange(answerIndex)}
-                        />
-                        <label>Correct</label>
-                    </div>
-                ))}
             </div>
             
             <div className="container-fluid ms-2">

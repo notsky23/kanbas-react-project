@@ -18,7 +18,6 @@ import QuizDetails from './Quizzes/Details';
 import "./Navigation/index.css"
 import QuizQuestions from './Quizzes/Questions';
 import QuizQuestionsEditor from './Quizzes/Questions/Editor';
-import QuizPreview from './Quizzes/Details/Preview';
 
 function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLastVisitedCourseId: (id: string) => void; }) {
     const { courseId } = useParams<{ courseId: string }>();
@@ -141,7 +140,6 @@ function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLa
                         <Route path="Quizzes" element={<QuizzesList />} />
                         {/* <Route path="Quizzes/:quizId" element={<QuizEditor />} /> */}
                         <Route path="Quizzes/:quizId/Details" element={<QuizDetails />} />
-                        <Route path="Quizzes/:quizId/Preview" element={<QuizPreview />} />
                         <Route path="Quizzes/:quizId/Edit" element={<QuizEditor />} />
                         <Route path="Quizzes/:quizId/Questions" element={<QuizQuestions />} />
                         <Route path="Quizzes/:quizId/Questions/:questionId" element={<QuizQuestionsEditor />} />
