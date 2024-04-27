@@ -1,3 +1,10 @@
 .dropdown-align-right {
     right: 20px; /* Adjust this value based on your actual layout */
 }
+.custom-input {
+    width: 60px !important;
+    margin-right: 10px !important; /* Ensuring it applies */
+}
+.question-link {
+    text-decoration: none; /* Hide underline */
+}

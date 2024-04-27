@@ -15,6 +15,10 @@ import axios from 'axios';
 import QuizzesList from './Quizzes/List';
 import QuizEditor from './Quizzes/Editor';
 import QuizDetails from './Quizzes/Details';
+import "./Navigation/index.css"
+import QuizQuestions from './Quizzes/Questions';
+import QuizQuestionsEditor from './Quizzes/Questions/Editor';
+import QuizPreview from './Quizzes/Details/Preview';
 
 function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLastVisitedCourseId: (id: string) => void; }) {
     const { courseId } = useParams<{ courseId: string }>();
@@ -88,7 +92,7 @@ function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLa
     };
 
     return (
-        <div className="container-fluid px-3 p-md-4">
+        <div className="container-fluid px-3 p-md-4" >
             {isNavVisible && (
                 <div className="row d-none d-md-flex">
                     {/* Breadcrumbs */}
@@ -118,13 +122,13 @@ function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLa
             
             <div className='row'>
                 {/* Course Navigation */}
-                <div className="col-auto d-none d-md-block me-0">
+                <div className="col-auto d-none d-md-block me-0 wd-navigation" >
                     <CourseNavigation />
                 </div>
 
                 {/* Main Body */}
                 {/* <div style={mainContentStyle}> */}
-                <div className='col pe-0 me-0'>
+                <div className='col pe-0 me-0' style={{height: "87vh", overflowY: "auto"}}>
                     <Routes>
                         <Route path="/" element={<Navigate to="Home" />} />
                         <Route path="Home" element={<Home />} />
@@ -135,9 +139,12 @@ function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLa
                         <Route path="Assignments/:assignmentId" element={<AssignmentEditor />} />
                         {/* <Route path="Quizzes" element={<h1>Quizzes</h1>} /> */}
                         <Route path="Quizzes" element={<QuizzesList />} />
-                        <Route path="Quizzes/:quizId" element={<QuizEditor />} />
+                        {/* <Route path="Quizzes/:quizId" element={<QuizEditor />} /> */}
                         <Route path="Quizzes/:quizId/Details" element={<QuizDetails />} />
+                        <Route path="Quizzes/:quizId/Preview" element={<QuizPreview />} />
                         <Route path="Quizzes/:quizId/Edit" element={<QuizEditor />} />
+                        <Route path="Quizzes/:quizId/Questions" element={<QuizQuestions />} />
+                        <Route path="Quizzes/:quizId/Questions/:questionId" element={<QuizQuestionsEditor />} />
                         <Route path="Grades" element={<Grades />} />
                         <Route path="People" element={<h1>People</h1>} />
                         <Route path="Panopto-Video" element={<h1>Panopto Video</h1>} />

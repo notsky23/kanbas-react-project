@@ -9,7 +9,7 @@ function CourseNavigation() {
   const formatLink = (link: string) => `/Kanbas/Courses/${pathname.split('/')[3]}/${link.replace(/ /g, '-')}`;
 
   return (
-    <ul className="wd-navigation">
+    <ul>
       {links.map((link, index) => (
         <li key={index} className={pathname.includes(formatLink(link)) ? "wd-active" : ""}>
           <Link to={formatLink(link)}>{link}</Link>

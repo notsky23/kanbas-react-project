@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { FaCheckCircle, FaEllipsisV } from "react-icons/fa";
+import { GoCircleSlash } from "react-icons/go";
 import { GrEdit } from "react-icons/gr";
 import {
     createQuiz,
@@ -33,16 +34,16 @@ function QuizDetails() {
     const navigate = useNavigate();
 
     const [quiz, setQuiz] = useState({
-        title: "",
+        title: "New Quiz",
         course: "",
-        description: "",
+        description: "New Description",
         quiztype: "Quizzes",
         points: 0,
         assignmentGroup: "",
         shuffleAnswers: true,
+        timeLimitCheck: true,
         timeLimit: 20,
         MultipleAttempts: false,
-        viewResponses: "Always",
         showCorrectAnswers: "Immediately",
         accessCode: "",
         oneQuestionAtATime: true,
@@ -51,6 +52,8 @@ function QuizDetails() {
         dueDate: "",
         availableDate: "",
         untilDate: "",
+        published: false,
+        questions: []
     });
 
     useEffect(() => {
@@ -74,12 +77,47 @@ function QuizDetails() {
         setNotifyChange(e.target.checked);
     };
 
+    // Toggle publish status
+    const togglePublishStatus = async () => {
+        const publishState = !quiz.published;
+        await updateQuiz({...quiz, published: publishState});
+        setQuiz(prev => ({
+            ...prev,
+            published: publishState // Toggle the published status
+        }));
+    };
+
     return (
         <div className="flex-grow-1 pe-2 pe-md-3">
             <ToastContainer />
             <div className="d-flex justify-content-end">
-                <button className="btn btn-success me-2" style={{ height: "2.5em" }}><FaCheckCircle /> Published</button>
-                <button className="btn btn-light border me-2" style={{ height: "2.5em" }}>Preview</button>
+                {/* <button className="btn btn-success me-2" style={{ height: "2.5em" }}><FaCheckCircle /> Published</button> */}
+                {quiz.published ? (
+                    <button
+                        className="btn btn-success me-2"
+                        style={{ height: "2.5em" }}
+                        onClick={togglePublishStatus}
+                        // disabled={quizId === 'New'}
+                    >
+                        <FaCheckCircle /> Published
+                    </button>
+                ) : (
+                    <button
+                        className="btn btn-light text-secondary me-2"
+                        style={{ height: "2.5em" }}
+                        onClick={togglePublishStatus}
+                        // disabled={quizId === 'New'}
+                    >
+                        <GoCircleSlash /> Unpublished
+                    </button>
+                )}
+                <button
+                    className="btn btn-light border me-2"
+                    style={{ height: "2.5em" }}
+                    onClick={() => navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Preview`)}
+                >
+                    Preview
+                </button>
                 <button
                     className="btn btn-light border me-2"
                     style={{ height: "2.5em" }}
@@ -155,14 +193,14 @@ function QuizDetails() {
             </div>
 
             {/* View Responses */}
-            <div className="row text-nowrap mb-2">
+            {/* <div className="row text-nowrap mb-2">
                 <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
                     View Responses :
                 </div>
                 <div className="col col-8">
                     {quiz.viewResponses}
                 </div>
-            </div>
+            </div> */}
 
             {/* Show Correct Answers */}
             <div className="row text-nowrap mb-2">

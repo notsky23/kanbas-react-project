@@ -1,8 +1,7 @@
 [
     {
-        "_id": "Q101",
         "title": "HTML Basics Quiz",
-        "course": "CS101",
+        "course": "66208adc04b38898d66c5204",
         "description": "Test your knowledge on basic HTML tags, attributes, and document structure.",
         "quiztype": "Graded Quiz",
         "points": 50,
@@ -82,9 +81,8 @@
           ]
     },
     {
-        "_id": "Q102",
         "title": "CSS Flexbox and Grid Quiz",
-        "course": "CS101",
+        "course": "66208adc04b38898d66c5204",
         "description": "Assess your skills in CSS Flexbox and Grid by answering practical problems and scenarios that test your understanding of responsive design techniques.",
         "quiztype": "Graded Quiz",
         "points": 50,
@@ -105,9 +103,8 @@
         "questions": []
     },
     {
-        "_id": "Q103",
         "title": "JavaScript and React Basics Quiz",
-        "course": "CS101",
+        "course": "66208adc04b38898d66c5204",
         "description": "Evaluate your knowledge on JavaScript fundamentals and basic React concepts, focusing on state management, component lifecycle, and event handling.",
         "quiztype": "Graded Quiz",
         "points": 50,
