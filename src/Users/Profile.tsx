@@ -23,11 +23,11 @@ export default function Profile() {
 
     // Read/Retrieve the user's profile
     useEffect(() => {
-        if (!user) {
-            console.log("No user logged in, skipping profile fetch.");
-            navigate("/Kanbas/Account/Signin");
-            return;
-        }
+        // if (!user) {
+        //     console.log("No user logged in, skipping profile fetch.");
+        //     navigate("/Kanbas/Account/Signin");
+        //     return;
+        // }
 
         const fetchProfile = async () => {
             try {
