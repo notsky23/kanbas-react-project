@@ -63,12 +63,12 @@ function Kanbas() {
    }, [user]);
    useEffect(() => {fetchCourses();}, [fetchCourses]);
 
-   useEffect(() => {
-      if (!loading && !user && !isPublicRoute()) {
-          console.log("No user logged in, redirecting to sign-in.");
-          navigate("/Kanbas/Account/Signin");
-      }
-   }, [user, loading, isPublicRoute]);
+   // useEffect(() => {
+   //    if (!loading && !user && !isPublicRoute()) {
+   //        console.log("No user logged in, redirecting to sign-in.");
+   //        navigate("/Kanbas/Account/Signin");
+   //    }
+   // }, [user, loading, isPublicRoute]);
 
    const addOrEditCourse = async (newCourseData: any) => {
       try {
