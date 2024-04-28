@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "../index.css"
+import { Quiz, BaseQuestion } from "../quizTypes";
 
 // import { useSelector, useDispatch } from "react-redux";
 // import { quizzes } from "../../../Database";
@@ -27,7 +28,28 @@ function QuizEditor() {
     const { courseId, quizId } = useParams();
     const navigate = useNavigate();
 
-    const [quiz, setQuiz] = useState({
+    const [quiz, setQuiz] = useState<{
+        title: string;
+        course: string;
+        description: string;
+        quiztype: string;
+        points: number;
+        assignmentGroup: string;
+        shuffleAnswers: boolean;
+        timeLimitCheck: boolean;
+        timeLimit: number;
+        MultipleAttempts: boolean;
+        showCorrectAnswers: string;
+        accessCode: string;
+        oneQuestionAtATime: boolean;
+        webcamRequired: boolean;
+        lockQuestionsAfterAnswering: boolean;
+        dueDate: string;
+        availableDate: string;
+        untilDate: string;
+        published: boolean;
+        questions: Array<BaseQuestion>; // Define type as Array<BaseQuestion>
+    }>({
         title: "New Quiz",
         course: "",
         description: "New Description",
@@ -87,13 +109,20 @@ function QuizEditor() {
             console.error('Course ID is undefined.');
             return;
         }
+
+        // Calculate the total points from all questions
+        const totalPoints = calculatePointSum();
+        const quizToSave = {
+            ...quiz,
+            points: totalPoints, // Ensure the points are updated based on the current questions
+        };
     
         try {
             let result;
             if (quizId === 'New') {
-                result = await createQuiz(courseId, quiz);
+                result = await createQuiz(courseId, quizToSave);
             } else {
-                result = await updateQuiz({_id: quizId, ...quiz});
+                result = await updateQuiz({_id: quizId, ...quizToSave});
             }
     
             if (notifyChange) {
@@ -103,11 +132,11 @@ function QuizEditor() {
                     autoClose: 1000 
                 });
                 setTimeout(() => {
-                    navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
+                    navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`);
                 }, 2100); // Slightly longer than autoClose to ensure the user sees the message
             } else {
                 // Navigate immediately and then show the toast
-                navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
+                navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`);
                 setTimeout(() => {
                     toast('Quiz saved successfully.', { type: 'success' });
                 }, 500); // Short delay to ensure navigation has occurred
@@ -125,6 +154,9 @@ function QuizEditor() {
             return;
         }
 
+        // Calculate the total points from all questions
+        const totalPoints = calculatePointSum();
+
         // Update local state to reflect that the quiz is being published
         setQuiz(prev => ({
             ...prev,
@@ -134,6 +166,7 @@ function QuizEditor() {
         // Prepare the quiz object with the published status set to true
         const quizToSave = {
             ...quiz,
+            points: totalPoints,
             published: true
         };
 
@@ -142,7 +175,7 @@ function QuizEditor() {
             const result = quizId === 'New' ? await createQuiz(courseId, quizToSave) : await updateQuiz({...quizToSave, _id: quizId});
             toast('Quiz saved and published successfully!', { type: 'success' });
             setTimeout(() => {
-                navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
+                navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`);
             }, 1500); // Navigate after a slight delay
         } catch (error) {
             console.error('Failed to save and publish the Quiz:', error);
@@ -164,11 +197,19 @@ function QuizEditor() {
         }));
     };
 
+    // Calculate the total points from all questions
+    const calculatePointSum = () => {
+        // Calculate the total points from all questions
+        const totalPoints = quiz.questions.reduce((sum, question) => sum + question.points, 0);
+
+        return totalPoints;
+    }
+
     return (
         <div className="flex-grow-1 pe-2 pe-md-3">
             <ToastContainer />
             <div className="d-flex justify-content-end align-items-center">
-                <span className="me-3">Points: {quiz.points}</span>
+                <span className="me-3">Points: {calculatePointSum()}</span>
                 {quiz.published ? (
                     <button
                         className="btn btn-light text-success me-2"
@@ -452,7 +493,7 @@ function QuizEditor() {
                     <button onClick={handleSaveAndPublish} className="btn btn-light border ms-2 float-end">
                         Save and Publish
                     </button>
-                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes`} className="btn btn-light border float-end">
+                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`} className="btn btn-light border float-end">
                         Cancel
                     </Link>
                 </div>

@@ -31,7 +31,14 @@
                 {
                     "_id": "B101",
                     "blankIndex": 1,
-                    "answer": "False"
+                    "answer": "False",
+                    "correct": true
+                  },
+                  {
+                    "_id": "B102",
+                    "blankIndex": 1,
+                    "answer": "True",
+                    "correct": false
                   }
               ]
             },
@@ -45,17 +52,20 @@
                 {
                     "_id": "B201",
                     "blankIndex": 1,
-                    "answer": "<a>"
+                    "answer": "<a>",
+                    "correct": true
                   },
                   {
                     "_id": "B202",
                     "blankIndex": 2,
-                    "answer": "<div>"
+                    "answer": "<div>",
+                    "correct": false
                   },
                   {
                     "_id": "B203",
                     "blankIndex": 3,
-                    "answer": "<p>"
+                    "answer": "<p>",
+                    "correct": false
                   }
               ]
             },
@@ -70,12 +80,14 @@
                 {
                     "_id": "B301",
                     "blankIndex": 1,
-                    "answer": "HyperText"
+                    "answer": "HyperText",
+                    "correct": true
                   },
                   {
                     "_id": "B302",
                     "blankIndex": 2,
-                    "answer": "web page"
+                    "answer": "web page",
+                    "correct": true
                   }
               ]
             }

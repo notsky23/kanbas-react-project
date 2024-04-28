@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import { FaPlus, FaCheckCircle, FaEllipsisV, FaRegQuestionCircle } from "react-icons/fa";
 import { GoCircleSlash } from "react-icons/go";
+import { BsTrash3Fill } from "react-icons/bs";
 import {
     createQuiz,
     updateQuiz,
@@ -19,7 +20,7 @@ import { Quiz, BaseQuestion } from "../quizTypes";
 // import { KanbasState } from "../../../store";
 // import { useNotification } from "../../../NotificationContext";
 
-function QuizQuestionsEditor() {
+function QuizQuestions() {
     const formatDate = (dateString: string | undefined) => {
         return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
     };
@@ -28,7 +29,8 @@ function QuizQuestionsEditor() {
     const { courseId, quizId} = useParams();
     const navigate = useNavigate();
 
-    const [quiz, setQuiz] = useState({
+    const [quiz, setQuiz] = useState<Quiz>({
+        _id: 'New',
         title: "New Quiz",
         course: "",
         description: "New Description",
@@ -51,6 +53,7 @@ function QuizQuestionsEditor() {
         questions: []
     });
 
+    // Fetch the quiz data if the quiz ID is not 'New'
     useEffect(() => {
         if (courseId && quizId && quizId !== 'New') {
             findQuizById(courseId, quizId)
@@ -66,18 +69,78 @@ function QuizQuestionsEditor() {
         }
     }, [quizId, courseId]);
 
+    // Create a new question
+    const handleCreateQuestion = async () => {
+        // Default structure for a new question
+        const newQuestionData = {
+            _id: `question-${Date.now()}`, // Temporary ID until saved
+            title: "",
+            type: "Multiple Choice Question", // Default type, adjust as needed
+            points: 0,
+            question: "",
+            answers: []  // Start with an empty answers array
+        };
+    
+        // Append the new question to the current quiz's questions array
+        const updatedQuiz = {
+            ...quiz,
+            questions: [...quiz.questions, newQuestionData]
+        };
+
+        // Call the API to update the quiz with the new question
+        try {
+            const result = await updateQuiz({ ...updatedQuiz });
+            setQuiz(result);  // Update local state with the new quiz data including the new question
+            navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions/${newQuestionData._id}`);
+            toast('Question added successfully!', { type: 'success' });
+        } catch (error) {
+            console.error('Failed to add new question:', error);
+            toast('Failed to add new question.', { type: 'error' });
+        }
+    
+        // // Navigate to the question editor route for this new question
+        // navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions/${newQuestionData._id}`);
+    };
+
+    // Delete a question
+    const handleDeleteQuestion = async (questionId: any) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this question?");
+        if (isConfirmed) {
+            // Update local state to filter out the deleted question
+            const updatedQuestions = quiz.questions.filter(question => question._id !== questionId);
+            const updatedQuiz = { ...quiz, questions: updatedQuestions };
+    
+            // Call the API to update the quiz with the filtered questions
+            try {
+                await updateQuiz({ ...updatedQuiz, _id: quizId });
+                setQuiz(updatedQuiz);  // Update local state with the new quiz data
+                // toast('Question deleted successfully!', { type: 'success' });
+            } catch (error) {
+                console.error('Failed to delete the question:', error);
+                // toast('Failed to delete the question.', { type: 'error' });
+            }
+        }
+    };
+
     const handleSave = async () => {
         if (!courseId) {
             console.error('Course ID is undefined.');
             return;
         }
+
+        // Calculate the total points from all questions
+        const totalPoints = calculatePointSum();
+        const quizToSave = {
+            ...quiz,
+            points: totalPoints, // Ensure the points are updated based on the current questions
+        };
     
         try {
             let result;
             if (quizId === 'New') {
-                result = await createQuiz(courseId, quiz);
+                result = await createQuiz(courseId, quizToSave);
             } else {
-                result = await updateQuiz({_id: quizId, ...quiz});
+                result = await updateQuiz({...quizToSave, _id: quizId,});
             }
     
             if (notifyChange) {
@@ -87,11 +150,11 @@ function QuizQuestionsEditor() {
                     autoClose: 1000 
                 });
                 setTimeout(() => {
-                    navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
+                    navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`);
                 }, 2100); // Slightly longer than autoClose to ensure the user sees the message
             } else {
                 // Navigate immediately and then show the toast
-                navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
+                navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`);
                 setTimeout(() => {
                     toast('Quiz saved successfully.', { type: 'success' });
                 }, 500); // Short delay to ensure navigation has occurred
@@ -109,6 +172,9 @@ function QuizQuestionsEditor() {
             return;
         }
 
+        // Calculate the total points from all questions
+        const totalPoints = calculatePointSum();
+
         // Update local state to reflect that the quiz is being published
         setQuiz(prev => ({
             ...prev,
@@ -118,6 +184,7 @@ function QuizQuestionsEditor() {
         // Prepare the quiz object with the published status set to true
         const quizToSave = {
             ...quiz,
+            points: totalPoints,
             published: true
         };
 
@@ -126,7 +193,7 @@ function QuizQuestionsEditor() {
             const result = quizId === 'New' ? await createQuiz(courseId, quizToSave) : await updateQuiz({...quizToSave, _id: quizId});
             toast('Quiz saved and published successfully!', { type: 'success' });
             setTimeout(() => {
-                navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
+                navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`);
             }, 1500); // Navigate after a slight delay
         } catch (error) {
             console.error('Failed to save and publish the Quiz:', error);
@@ -148,11 +215,19 @@ function QuizQuestionsEditor() {
         }));
     };
 
+    // Calculate the total points from all questions
+    const calculatePointSum = () => {
+        // Calculate the total points from all questions
+        const totalPoints = quiz.questions.reduce((sum, question) => sum + question.points, 0);
+
+        return totalPoints;
+    }
+
     return (
         <div className="flex-grow-1 pe-2 pe-md-3">
             <ToastContainer />
             <div className="d-flex justify-content-end align-items-center">
-                <span className="me-3">Points: {quiz.points}</span>
+                <span className="me-3">Points: {calculatePointSum()}</span>
                 {quiz.published ? (
                     <button
                         className="btn btn-light text-success me-2"
@@ -187,6 +262,7 @@ function QuizQuestionsEditor() {
                     className="btn btn-light border float-end mb-3"
                     title="Add Question"
                     style={{ height: "calc(2.25rem + 2px)", whiteSpace: "nowrap", border: "1px solid #ced4da" }}
+                    onClick={handleCreateQuestion}
                 >
                         <FaPlus /> &nbsp; New Question
                 </button>
@@ -194,6 +270,7 @@ function QuizQuestionsEditor() {
 
             <br /><br /><br />
             
+            {/* Display the list of questions */}
             <div className="container-fluid ms-2">
                 <h3>Questions</h3>
                 <div className="row">
@@ -203,6 +280,11 @@ function QuizQuestionsEditor() {
                                 <FaRegQuestionCircle className="text-secondary ms-5"/> &nbsp;
                                 <span className="text-danger">{`Question ${index + 1}: ${question.title}`}</span>
                             </Link>
+                            <BsTrash3Fill
+                                    className="text-danger ms-5 me-2"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => handleDeleteQuestion(question._id)}
+                            />
                         </div>
                     ))}
                 </div>
@@ -229,7 +311,7 @@ function QuizQuestionsEditor() {
                     <button onClick={handleSaveAndPublish} className="btn btn-light border ms-2 float-end">
                         Save and Publish
                     </button>
-                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes`} className="btn btn-light border float-end">
+                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Details`} className="btn btn-light border float-end">
                         Cancel
                     </Link>
                 </div>
@@ -239,4 +321,4 @@ function QuizQuestionsEditor() {
     );
 }
 
-export default QuizQuestionsEditor;
+export default QuizQuestions;

@@ -17,7 +17,8 @@ import QuizEditor from './Quizzes/Editor';
 import QuizDetails from './Quizzes/Details';
 import "./Navigation/index.css"
 import QuizQuestions from './Quizzes/Questions';
-import QuizQuestionsEditor from './Quizzes/Questions/Editor';
+import QuizQuestionEditor from './Quizzes/Questions/Editor';
+import QuizTemplate from './Quizzes/Quiz';
 
 function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLastVisitedCourseId: (id: string) => void; }) {
     const { courseId } = useParams<{ courseId: string }>();
@@ -139,10 +140,12 @@ function Courses({ courses, setLastVisitedCourseId }: { courses: Course[]; setLa
                         {/* <Route path="Quizzes" element={<h1>Quizzes</h1>} /> */}
                         <Route path="Quizzes" element={<QuizzesList />} />
                         {/* <Route path="Quizzes/:quizId" element={<QuizEditor />} /> */}
+                        <Route path="Quizzes/:quizId/Quiz" element={<QuizTemplate />} />
                         <Route path="Quizzes/:quizId/Details" element={<QuizDetails />} />
                         <Route path="Quizzes/:quizId/Edit" element={<QuizEditor />} />
                         <Route path="Quizzes/:quizId/Questions" element={<QuizQuestions />} />
-                        <Route path="Quizzes/:quizId/Questions/:questionId" element={<QuizQuestionsEditor />} />
+                        <Route path="Quizzes/:quizId/Questions/New" element={<QuizQuestionEditor />} />
+                        <Route path="Quizzes/:quizId/Questions/:questionId" element={<QuizQuestionEditor />} />
                         <Route path="Grades" element={<Grades />} />
                         <Route path="People" element={<h1>People</h1>} />
                         <Route path="Panopto-Video" element={<h1>Panopto Video</h1>} />

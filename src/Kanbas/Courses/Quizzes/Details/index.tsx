@@ -88,7 +88,7 @@ function QuizDetails() {
     };
 
     return (
-        <div className="flex-grow-1 pe-2 pe-md-3">
+        <div className="container-fluid flex-grow-1 pe-2 pe-md-3">
             <ToastContainer />
             <div className="d-flex justify-content-end">
                 {/* <button className="btn btn-success me-2" style={{ height: "2.5em" }}><FaCheckCircle /> Published</button> */}
@@ -114,7 +114,7 @@ function QuizDetails() {
                 <button
                     className="btn btn-light border me-2"
                     style={{ height: "2.5em" }}
-                    onClick={() => navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Preview`)}
+                    onClick={() => navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Quiz`)}
                 >
                     Preview
                 </button>
@@ -132,123 +132,125 @@ function QuizDetails() {
 
             <h3 className="mb-4">{quiz.title}</h3>
 
-            {/* Quiz Type */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Quiz Type :
+            <div className="ms-4">
+                {/* Quiz Type */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Quiz Type :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.title}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.title}
-                </div>
-            </div>
 
-            {/* Points */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Points :
+                {/* Points */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Points :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.points}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.points}
-                </div>
-            </div>
 
-            {/* Assignment Group */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Assignment Group :
+                {/* Assignment Group */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Assignment Group :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.assignmentGroup}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.assignmentGroup}
-                </div>
-            </div>
 
-            {/* Shuffle Answers */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Shuffle Answers :
+                {/* Shuffle Answers */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Shuffle Answers :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.shuffleAnswers ? 'Yes' : 'No'}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.shuffleAnswers ? 'Yes' : 'No'}
-                </div>
-            </div>
 
-            {/* Time Limit */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Time Limit :
+                {/* Time Limit */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Time Limit :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.timeLimit} minutes
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.timeLimit} minutes
-                </div>
-            </div>
 
-            {/* Multiple Attempts */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Multiple Attempts :
+                {/* Multiple Attempts */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Multiple Attempts :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.MultipleAttempts ? 'Yes' : 'No'}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.MultipleAttempts ? 'Yes' : 'No'}
-                </div>
-            </div>
 
-            {/* View Responses */}
-            {/* <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    View Responses :
-                </div>
-                <div className="col col-8">
-                    {quiz.viewResponses}
-                </div>
-            </div> */}
+                {/* View Responses */}
+                {/* <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        View Responses :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.viewResponses}
+                    </div>
+                </div> */}
 
-            {/* Show Correct Answers */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Show Correct Answers :
+                {/* Show Correct Answers */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Show Correct Answers :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.showCorrectAnswers}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.showCorrectAnswers}
-                </div>
-            </div>
 
-            {/* Access Code */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Access Code :
+                {/* Access Code */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Access Code :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.accessCode}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.accessCode}
-                </div>
-            </div>
 
-            {/* One Question at a Time */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    One Question at a Time :
+                {/* One Question at a Time */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        One Question at a Time :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.oneQuestionAtATime ? 'Yes' : 'No'}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.oneQuestionAtATime ? 'Yes' : 'No'}
-                </div>
-            </div>
 
-            {/* Webcam Required */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Webcam Required :
+                {/* Webcam Required */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Webcam Required :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.webcamRequired ? 'Yes' : 'No'}
+                    </div>
                 </div>
-                <div className="col col-8">
-                    {quiz.webcamRequired ? 'Yes' : 'No'}
-                </div>
-            </div>
 
-            {/* Lock Questions After Answering */}
-            <div className="row text-nowrap mb-2">
-                <div className="col col-4 d-flex justify-content-end align-items-center fw-bold">
-                    Lock Questions After Answering :
-                </div>
-                <div className="col col-8">
-                    {quiz.lockQuestionsAfterAnswering ? 'Yes' : 'No'}
+                {/* Lock Questions After Answering */}
+                <div className="row text-nowrap mb-2">
+                    <div className="col-6 col-md-4 d-flex justify-content-end align-items-center fw-bold">
+                        Lock Questions After :
+                    </div>
+                    <div className="col-6 col-md-8">
+                        {quiz.lockQuestionsAfterAnswering ? 'Yes' : 'No'}
+                    </div>
                 </div>
             </div>
 
@@ -272,6 +274,10 @@ function QuizDetails() {
                 </table>
             </div>
             
+            {/* Add a button to cancel the operation */}
+            <Link to={`/Kanbas/Courses/${courseId}/Quizzes`} className="btn btn-danger border float-end">
+                Back to main quizzes page
+            </Link>
         </div>
     );
 }

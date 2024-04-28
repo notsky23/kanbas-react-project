@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
-import { FaPlus, FaCheckCircle, FaEllipsisV, FaRegQuestionCircle } from "react-icons/fa";
-import { GoCircleSlash } from "react-icons/go";
+import { FaPlus, FaArrowAltCircleRight } from "react-icons/fa";
+import { BsTrash3Fill } from "react-icons/bs";
 import {
     createQuiz,
     updateQuiz,
@@ -12,15 +12,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "../../index.css"
-import { Quiz, BaseQuestion, TrueFalseQuestion, MultipleChoiceQuestion, FillInMultipleBlanksQuestion } from "../../quizTypes";
-import { current } from "@reduxjs/toolkit";
+import { Quiz, BaseQuestion } from "../../quizTypes";
 
 // import { useSelector, useDispatch } from "react-redux";
 // import { quizzes } from "../../../Database";
 // import { KanbasState } from "../../../store";
 // import { useNotification } from "../../../NotificationContext";
 
-function QuizQuestionsEditor() {
+function QuizQuestionEditor() {
     const formatDate = (dateString: string | undefined) => {
         return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
     };
@@ -29,6 +28,12 @@ function QuizQuestionsEditor() {
     const { courseId, quizId, questionId } = useParams();
     const navigate = useNavigate();
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
+
+    // State for displaying a toast notification
+    const [notifyChange, setNotifyChange] = useState(true);
+    const handleNotifyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNotifyChange(e.target.checked);
+    };
 
     const [quiz, setQuiz] = useState<{
         title: string;
@@ -81,6 +86,7 @@ function QuizQuestionsEditor() {
                     // Ensure every question has an 'answers' array
                     const questionsWithAnswers = fetchedQuiz.questions.map(question => ({
                         ...question,
+                        type: question.type || 'Multiple Choice Question',  // Ensure type exists
                         answers: question.answers || []  // Ensure answers array exists
                     }));
     
@@ -102,65 +108,42 @@ function QuizQuestionsEditor() {
         }
     }, [quizId, courseId, questionId]);
 
+    const isTrueFalse = quiz.questions[currentQuestionIndex]?.type === "True/False Question";
+
     // Handle form field changes
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-    
         console.log("Handling input change for", name, "to", value, "at index", currentQuestionIndex);
+
         // Update the state immutably
         setQuiz(prevState => {
             // Create a copy of the questions array
             const updatedQuestions = prevState.questions.map((question, index) => {
-                // Update only the question at the current index
                 if (index === currentQuestionIndex) {
-                    return {
+                    let updatedQuestion = {
                         ...question,
-                        // Parse the 'points' as integer if the changed field is 'points', otherwise update as string
-                        [name]: name === "points" ? parseInt(value, 10) || 0 : value
+                        [name]: name === "points" ? parseInt(value, 10) || '' : value
                     };
+
+                    // When the question type changes to "True/False Question", reset answers
+                    if (name === "type") {
+                        let updatedAnswers: any = [];
+                        if (value === "True/False Question") {
+                            updatedAnswers = [
+                                { _id: `answer-${Date.now()}-true`, answer: "True", correct: true },
+                                { _id: `answer-${Date.now()}-false`, answer: "False", correct: false }
+                            ];
+                        }
+                        updatedQuestion.answers = updatedAnswers;
+                    }
+                    return updatedQuestion;
                 }
-                return question; // Return all other questions as they were
+                return question;
             });
     
             // Return the new state with the updated questions array
             return { ...prevState, questions: updatedQuestions };
         });
-    };
-
-    const handleSave = async () => {
-        if (!courseId) {
-            console.error('Course ID is undefined.');
-            return;
-        }
-    
-        try {
-            let result;
-            if (quizId === 'New') {
-                result = await createQuiz(courseId, quiz);
-            } else {
-                result = await updateQuiz({_id: quizId, ...quiz});
-            }
-    
-            if (notifyChange) {
-                // Display toast and navigate after a short delay
-                toast('Update successful.', { 
-                    type: 'success',
-                    autoClose: 1000 
-                });
-                setTimeout(() => {
-                    navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
-                }, 2100); // Slightly longer than autoClose to ensure the user sees the message
-            } else {
-                // Navigate immediately and then show the toast
-                navigate(`/Kanbas/Courses/${courseId}/Quizzes`);
-                setTimeout(() => {
-                    toast('Quiz saved successfully.', { type: 'success' });
-                }, 500); // Short delay to ensure navigation has occurred
-            }
-        } catch (error) {
-            console.error('Failed to save the Quiz:', error);
-            toast('Failed to save Quiz.', { type: 'error' });
-        }
     };
 
     // handle ReactQuill change
@@ -178,25 +161,63 @@ function QuizQuestionsEditor() {
         }));
     };
 
-    // State for displaying a toast notification
-    const [notifyChange, setNotifyChange] = useState(true);
-    const handleNotifyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNotifyChange(e.target.checked);
+    const handleSave = async () => {
+        if (!courseId) {
+            console.error('Course ID is undefined.');
+            return;
+        }
+
+        // Calculate the total points from all questions
+        const totalPoints = calculatePointSum();
+        const quizToSave = {
+            ...quiz,
+            points: totalPoints, // Ensure the points are updated based on the current questions
+        };
+    
+        try {
+            let result;
+            console.log('Saving data:', quiz);
+            if (quizId === 'New') {
+                result = await createQuiz(courseId, quizToSave);
+            } else {
+                result = await updateQuiz({_id: quizId, ...quizToSave});
+            }
+    
+            if (notifyChange) {
+                // Display toast and navigate after a short delay
+                toast('Update successful.', { 
+                    type: 'success',
+                    autoClose: 1000 
+                });
+                setTimeout(() => {
+                    navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions`);
+                }, 2100); // Slightly longer than autoClose to ensure the user sees the message
+            } else {
+                // Navigate immediately and then show the toast
+                navigate(`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions`);
+                setTimeout(() => {
+                    toast('Quiz saved successfully.', { type: 'success' });
+                }, 500); // Short delay to ensure navigation has occurred
+            }
+        } catch (error) {
+            console.error('Failed to save the Quiz:', error);
+            toast('Failed to save Quiz.', { type: 'error' });
+        }
     };
 
-    // Toggle publish status
-    const togglePublishStatus = () => {
-        setQuiz(prev => ({
-            ...prev,
-            published: !prev.published // Toggle the published status
-        }));
-    };
-
+    // Add new answer to the current question
     const handleAddAnswer = () => {
         setQuiz(prevState => {
+            const isFillInBlanks = prevState.questions[currentQuestionIndex].type === "Fill in Multiple Blanks Question";
+            const newAnswer = {
+                _id: `answer-${Date.now()}`,
+                blankIndex: prevState.questions[currentQuestionIndex].answers.length,
+                answer: "",
+                correct: isFillInBlanks // All answers are correct for fill-in-the-blanks
+            };
+    
             const updatedQuestions = prevState.questions.map((question, index) => {
                 if (index === currentQuestionIndex) {
-                    const newAnswer = { text: "", isCorrect: false };
                     return {
                         ...question,
                         answers: [...question.answers, newAnswer]
@@ -209,6 +230,81 @@ function QuizQuestionsEditor() {
         });
     };
 
+    // Handle answer text change
+    const handleAnswerChange = (e:any, answerId:any) => {
+        const newText = e.target.value; // Correctly capturing the input value
+
+        setQuiz(prevState => {
+            const updatedQuestions = prevState.questions.map(question => {
+                if (question._id === quiz.questions[currentQuestionIndex]._id) {
+                    const updatedAnswers = question.answers.map(answer => {
+                        if (answer._id === answerId) {
+                            return { ...answer, answer: newText }; // Use the newText
+                        }
+                        return answer;
+                    });
+                    return { ...question, answers: updatedAnswers };
+                }
+                return question;
+            });
+            return { ...prevState, questions: updatedQuestions };
+        });
+    };
+
+    // Delete an answer from the current question
+    const handleDeleteAnswer = (answerId: any) => {
+        setQuiz(prevState => {
+            const updatedQuestions = prevState.questions.map(question => {
+                if (question._id === quiz.questions[currentQuestionIndex]._id) {
+                    const filteredAnswers = question.answers.filter(answer => answer._id !== answerId);
+                    return { ...question, answers: filteredAnswers };
+                }
+                return question;
+            });
+            return { ...prevState, questions: updatedQuestions };
+        });
+    };
+
+    // Toggle 'correct' status of an answer
+    const toggleCorrect = (answerId: string) => {
+        // Prevent toggling if the question type is "Fill in Multiple Blanks Question"
+        if (quiz.questions[currentQuestionIndex].type === "Fill in Multiple Blanks Question") {
+            return;
+        }
+
+        setQuiz(prevState => {
+            const updatedQuestions = prevState.questions.map(question => {
+                if (question._id === quiz.questions[currentQuestionIndex]._id) {
+                    // When toggling, ensure that only one answer can be correct for True/False type
+                    const updatedAnswers = question.answers.map(answer => {
+                        console.log("Answer", answer)
+                        if (question.type === "True/False Question") {
+                            // Set 'correct' to true only for the clicked answer and false for others
+                            return { ...answer, correct: answer._id === answerId ? !answer.correct : false };
+                        } else {
+                            // For other types, just toggle the clicked answer
+                            if (answer._id === answerId) {
+                                return { ...answer, correct: !answer.correct };
+                            }
+                            return answer;
+                        }
+                    });
+                    return { ...question, answers: updatedAnswers };
+                }
+                return question;
+            });
+            return { ...prevState, questions: updatedQuestions };
+        });
+    };
+
+    // Calculate the total points from all questions
+    const calculatePointSum = () => {
+        // Calculate the total points from all questions
+        const totalPoints = quiz.questions.reduce((sum, question) => sum + question.points, 0);
+
+        return totalPoints;
+    }
+
     return (
         <div className="flex-grow-1 pe-2 pe-md-3">
             <div className="container">
@@ -218,12 +314,14 @@ function QuizQuestionsEditor() {
                         {/* Left side: Title and Type selection within a single row */}
                         <div className="col-md-8">
                             <div className="row">
+
                                 {/* Question Title Input */}
                                 <div className="col-md-6">
                                     <input
                                         id="questionTitle"
                                         name="title"
                                         type="text"
+                                        placeholder="Question Title"
                                         className="form-control mb-2"  // Maintain bottom margin for spacing
                                         value={quiz.questions[currentQuestionIndex].title}
                                         onChange={handleInputChange}
@@ -239,9 +337,9 @@ function QuizQuestionsEditor() {
                                         value={quiz.questions[currentQuestionIndex].type}
                                         onChange={handleInputChange}
                                     >
-                                        <option value="TrueFalseQuestion">True or False</option>
-                                        <option value="MultipleChoiceQuestion">Multiple Choice</option>
-                                        <option value="FillInMultipleBlanksQuestion">Fill in Blanks</option>
+                                        <option value="True/False Question">True or False</option>
+                                        <option value="Multiple Choice Question">Multiple Choice</option>
+                                        <option value="Fill in Multiple Blanks Question">Fill in Blanks</option>
                                     </select>
                                 </div>
                             </div>
@@ -254,6 +352,7 @@ function QuizQuestionsEditor() {
                                 id="questionPoints"
                                 name="points"
                                 type="number"
+                                min={0}
                                 className="form-control"
                                 style={{ maxWidth: "100px" }}  // Ensuring the input box does not expand too much
                                 value={quiz.questions[currentQuestionIndex].points}
@@ -272,16 +371,18 @@ function QuizQuestionsEditor() {
                     className="btn btn-light border float-end mb-3"
                     title="Add Question"
                     style={{ height: "calc(2.25rem + 2px)", whiteSpace: "nowrap", border: "1px solid #ced4da" }}
+                    onClick={handleAddAnswer}
+                    disabled={isTrueFalse}  // Disable if True/False question
                 >
                         <FaPlus /> &nbsp; Add Answer
                 </button>
                 {quiz.questions.length > 0 ? (
                     <div className="my-3">
-                        {quiz.questions[currentQuestionIndex].type === 'TrueFalseQuestion' ? (
+                        {quiz.questions[currentQuestionIndex].type === 'True/False Question' ? (
                             <span>Enter your question text, then select if True or False is the correct answer.</span>
-                        ) : quiz.questions[currentQuestionIndex].type === 'MultipleChoiceQuestion' ? (
+                        ) : quiz.questions[currentQuestionIndex].type === 'Multiple Choice Question' ? (
                             <span>Enter your question and multiple answers, then select one correct answer.</span>
-                        ) : quiz.questions[currentQuestionIndex].type === 'FillInMultipleBlanksQuestion' ? (
+                        ) : quiz.questions[currentQuestionIndex].type === 'Fill in Multiple Blanks Question' ? (
                             <div>
                                 <p className="mb-0">Enter your question text, then define all possible correct answers for the blank.</p>
                                 <p>Students will see the question, followed by a small text box to type their answer.</p>
@@ -296,7 +397,7 @@ function QuizQuestionsEditor() {
                 <h3>Questions Editor</h3>
             </div>
 
-            {/* Question */}
+            {/* Question Editor*/}
             <div className="container mb-3">
                 {quiz.questions.length > 0 && (
                     <div className="mt-3">
@@ -308,22 +409,48 @@ function QuizQuestionsEditor() {
                     </div>
                 )}
             </div>
-            
-            <div className="container-fluid ms-2">
-                <div className="row">
-                    {quiz && (
-                        <div className="ms-5 mt-2">
-                            {quiz.questions.map((question, index) => (
-                                <div key={question._id} className="mb-2">
-                                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions/${question._id}`} style={{ textDecoration: "none" }}>
-                                        {/* Display question type and title */}
-                                        <span className="text-danger">{`Question ${index + 1}: ${question.type} - ${question.title}`}</span>
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+
+            {/* Answer Card */}
+            <div className="container my-5">
+                {quiz.questions.length > 0 && (
+                    <div>
+                        {quiz.questions[currentQuestionIndex].answers.map((answer) => (
+                            <div key={answer._id} className="d-flex align-items-center mb-4">
+                                {/* <FaArrowAltCircleRight className="text-secondary fs-3" /> &ensp; */}
+                                <FaArrowAltCircleRight
+                                    id="isAnswerCorrect"
+                                    className={answer.correct ? "text-success fs-3 me-3" : "text-secondary fs-3 me-3"}
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => toggleCorrect(answer._id)}
+                                />
+                                {/* <span className="text-secondary ms-2 me-3">Possible Answer</span> */}
+                                <label
+                                    htmlFor="isAnswerCorrect"
+                                    className={answer.correct ? "text-success me-3" : "text-secondary me-3"}
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => toggleCorrect(answer._id)}
+                                >
+                                    {answer.correct ? "Correct Answer" : "Possible Answer"}
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control me-4"
+                                    value={answer.answer}
+                                    onChange={(e) => handleAnswerChange(e, answer._id)}
+                                    placeholder="Type the answer here"
+                                    disabled={isTrueFalse}  // Disable if True/False question
+                                />
+                                {quiz.questions[currentQuestionIndex].type !== "True/False Question" && (
+                                    <BsTrash3Fill
+                                        className="ms-auto text-danger fs-3 me-2"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => handleDeleteAnswer(answer._id)}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
                 
             <br /><br />
@@ -344,7 +471,7 @@ function QuizQuestionsEditor() {
                     <button onClick={handleSave} className="btn btn-danger ms-2 float-end">
                         Update
                     </button>
-                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes`} className="btn btn-light border float-end">
+                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions`} className="btn btn-light border float-end">
                         Cancel
                     </Link>
                 </div>
@@ -354,4 +481,4 @@ function QuizQuestionsEditor() {
     );
 }
 
-export default QuizQuestionsEditor;
+export default QuizQuestionEditor;

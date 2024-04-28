@@ -50,18 +50,21 @@ interface TrueFalseAnswer {
     _id: string;
     blankIndex: number;
     answer: string;
+    correct: boolean;
 }
 
 interface MultipleChoiceAnswer {
     _id: string;
     blankIndex: number;
     answer: string;
+    correct: boolean;
 }
 
 interface FillInBlankAnswer {
     _id: string;
     blankIndex: number;
     answer: string;
+    correct: boolean;
 }
 
 // Define a union type for questions

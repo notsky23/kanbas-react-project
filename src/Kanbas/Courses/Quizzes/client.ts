@@ -30,7 +30,7 @@ export const findQuizById = async (courseId: string, quizId: string) => {
 // Update
 export const updateQuiz = async (quiz: any) => {
     const response = await axios.put(`${QUIZZES_API}/${quiz._id}`, quiz);
-    return response.status;
+    return response.data;
 };
 
 // Delete
