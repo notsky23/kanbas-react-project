@@ -71,8 +71,8 @@ Adding a course:<br>
 Web View:<br>
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/5eb2c0f8-68db-4d26-b9a3-578ad84d8099)<br><br>
 Mobile View:<br>
-![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/c906fd99-399e-4622-b218-c4712200ad28)<br><br>
-![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/7cf5c5da-2cf4-4ad7-9d2a-07eff01b73b4)<br><br>
+![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/c906fd99-399e-4622-b218-c4712200ad28)
+![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/7cf5c5da-2cf4-4ad7-9d2a-07eff01b73b4)
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/0d34e5f6-a692-4df1-82b3-76716a644e3d)<br><br>
 
 ### 7a - Courses -> Assignments:<br>
