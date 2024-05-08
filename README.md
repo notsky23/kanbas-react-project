@@ -11,10 +11,10 @@ HW Guide:
 <br><br>
 
 ## Remote:
-Link to GitHub repository to React.js project - https://github.com/notsky23/kanbas-react-project.
-Link to GitHub repository to Node.js project - https://github.com/notsky23/kanbas-node-project.
-Link to React.js project running on Netlify or some other remote hosting server - https://harmonious-cannoli-f4be26.netlify.app.
-Link to Node.js project running on Render.com, Heroku.com, AWS, KinstaLinks to an external site., or any Node.js hosting service of your choice - https://kanbas-node-server-app-vmbu.onrender.com.
+Link to GitHub repository to React.js project - https://github.com/notsky23/kanbas-react-project.<br>
+Link to GitHub repository to Node.js project - https://github.com/notsky23/kanbas-node-project.<br>
+Link to React.js project running on Netlify or some other remote hosting server - https://harmonious-cannoli-f4be26.netlify.app.<br>
+Link to Node.js project running on Render.com, Heroku.com, AWS, KinstaLinks to an external site., or any Node.js hosting service of your choice - https://kanbas-node-server-app-vmbu.onrender.com.<br>
 
 # Project Overview<br>
 
