@@ -7,8 +7,7 @@ HW Guide:
 4. [WD A4 STATE+REDUX SP24.pdf](https://github.com/notsky23/kanbas-react-project/files/15254407/WD.A4.STATE%2BREDUX.SP24.pdf)
 5. [WD A5 SP24 - NODE+REST+APIs.pdf](https://github.com/notsky23/kanbas-react-project/files/15254409/WD.A5.SP24.-.NODE%2BREST%2BAPIs.pdf)
 6. [WD A6 MONGO - SP24.pdf](https://github.com/notsky23/kanbas-react-project/files/15254414/WD.A6.MONGO.-.SP24.pdf)
-7. [WD KANBAS QU[Uploading WD A2 CSS+BOOTSTRAP SP24.pdf…]()
-IZZES PROJECT REQUIREMENTS.pdf](https://github.com/notsky23/kanbas-react-project/files/15254392/WD.KANBAS.QUIZZES.PROJECT.REQUIREMENTS.pdf)
+7. [WD KANBAS QUIZZES PROJECT REQUIREMENTS.pdf](https://github.com/notsky23/kanbas-react-project/files/15254392/WD.KANBAS.QUIZZES.PROJECT.REQUIREMENTS.pdf)
 <br><br>
 
 # Project Overview<br>
