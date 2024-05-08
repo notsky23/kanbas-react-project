@@ -145,3 +145,7 @@ Mobile View:<br>
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/0dc36071-b803-49d7-bfde-f81fd7a1a38b)<br><br>
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/46e157ee-51a6-4552-9ebe-c207f97e318f)<br><br>
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/2595c19b-761b-417d-bb77-d48da36ad34b)<br><br>
+
+### 10 - Database:<br>
+![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/ff3cecf0-55c8-48f6-ad4e-3ff4f42e2855)<br><br>
+
