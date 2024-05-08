@@ -135,8 +135,9 @@ function QuizzesList() {
             };
 
             try {
-                const status = await updateQuiz(updatedQuiz);
-                if (status === 200) {
+                const updatedData = await updateQuiz(updatedQuiz);
+                console.log("Quiz publish status updated:", updatedData);
+                if (updatedData && updatedData._id) {
                     setQuizzes(prevQuizzes => prevQuizzes.map(quiz =>
                         quiz._id === quizId ? { ...quiz, published: !quiz.published } : quiz
                     ));
