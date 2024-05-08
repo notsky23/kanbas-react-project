@@ -78,6 +78,8 @@ Web View:<br>
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/d6491dad-a3ce-4092-9dd3-f8aded02e26d)<br><br>
 Mobile View:<br>
 ![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/768381a2-0b47-40db-8903-f2b8babb18af)<br><br>
+![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/7cf5c5da-2cf4-4ad7-9d2a-07eff01b73b4)<br><br>
+![image](https://github.com/notsky23/kanbas-react-project/assets/98131995/0d34e5f6-a692-4df1-82b3-76716a644e3d)<br><br>
 
 ### 7b - Courses -> Assignment Editor:<br>
 Web View:<br>
