@@ -10,6 +10,12 @@ HW Guide:
 7. [WD KANBAS QUIZZES PROJECT REQUIREMENTS.pdf](https://github.com/notsky23/kanbas-react-project/files/15254392/WD.KANBAS.QUIZZES.PROJECT.REQUIREMENTS.pdf)
 <br><br>
 
+## Remote:
+Link to GitHub repository to React.js project - https://github.com/notsky23/kanbas-react-project.
+Link to GitHub repository to Node.js project - https://github.com/notsky23/kanbas-node-project.
+Link to React.js project running on Netlify or some other remote hosting server - https://harmonious-cannoli-f4be26.netlify.app.
+Link to Node.js project running on Render.com, Heroku.com, AWS, KinstaLinks to an external site., or any Node.js hosting service of your choice - https://kanbas-node-server-app-vmbu.onrender.com.
+
 # Project Overview<br>
 
 This project represents the culmination of a semester-long course in full-stack web development, skillfully integrating both client-side and server-side technologies. The primary focus is to develop a robust web application that leverages modern web development frameworks and libraries. <br><br>
