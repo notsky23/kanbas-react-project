@@ -24,14 +24,41 @@
     opacity: 0.5;
 }
 
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;  /* This will push the last item to the bottom */
+    height: 100%;  /* Ensure it takes full height of its container */
+}
+
+.modal-navigation .nav-bottom-icon {
+    margin-top: auto;  /* This ensures it sticks to the bottom */
+}
+
 .dropdown-list {
     position: relative;
     z-index: 1000; /* Ensure it's above other content */
     width: 100%;
     background-color: white;
+    list-style: none;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Optional: adds a shadow for better visibility */
     top: 100%; /* Position directly below the button */
     left: 0;
     height: 30vh;
     overflow-y: auto;
 }
+.dropdown-list li {
+    padding-left: 10px;
+    list-style: none;
+}
+.dropdown-list li.wd-active {
+    border-left: 2px solid black;
+}
+.dropdown-list li.wd-active a {
+    color: black;
+}
+.dropdown-list a {
+    color: red;
+    text-decoration: none;
+}
+

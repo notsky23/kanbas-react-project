@@ -8,8 +8,12 @@
     height: 87vh;
     overflow-y: auto;
 }
+.wd-navigation ul {
+    padding-left: 10px;
+}
 .wd-navigation li {
     padding-left: 10px;
+    margin: 0;
     margin-bottom: 5px;
     margin-top: 5px;
     padding-top: 5px;

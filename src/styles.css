@@ -24,9 +24,9 @@ body * {
 }
 
 /* Hide the default separator */
-.breadcrumb-item + .breadcrumb-item::before {
+/* .breadcrumb-item + .breadcrumb-item::before {
     content: none;
-}
+} */
 
 /* Add a custom separator */
 .breadcrumb-item + .breadcrumb-item::before {

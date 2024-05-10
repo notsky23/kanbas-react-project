@@ -276,15 +276,22 @@ function QuizQuestions() {
                 <div className="row">
                     {quiz.questions.map((question: BaseQuestion, index: number) => (
                         <div className="col-12 mb-0" key={question._id}>
-                            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions/${question._id}`} style={{textDecoration: "none"}}>
-                                <FaRegQuestionCircle className="text-secondary ms-5"/> &nbsp;
-                                <span className="text-danger">{`Question ${index + 1}: ${question.title}`}</span>
-                            </Link>
-                            <BsTrash3Fill
-                                    className="text-danger ms-5 me-2"
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => handleDeleteQuestion(question._id)}
-                            />
+                            <div className="row">
+                                <div className="col-9 col-md-10 text-nowrap">
+                                    <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Questions/${question._id}`} style={{textDecoration: "none"}}>
+                                        <FaRegQuestionCircle className="text-secondary ms-5"/> &nbsp;
+                                        <span className="text-danger">{`Question ${index + 1}: ${question.title}`}</span>
+                                    </Link>
+                                </div>
+                                <div className="col-1">
+                                    <BsTrash3Fill
+                                        className="text-danger ms-5 me-2"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => handleDeleteQuestion(question._id)}
+                                    />
+                                </div>
+                            </div>
+                            
                         </div>
                     ))}
                 </div>

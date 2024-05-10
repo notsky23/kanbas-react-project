@@ -44,7 +44,7 @@ function TopMenuBar({ courses = [] }: { courses: Course[] }) {
 
     // Logic to determine the display text
     const getDisplayText = () => {
-        const pathSegments = location.pathname.split('/').filter(segment => segment);
+        const pathSegments = location.pathname.split('/').filter(segment => segment.length > 0);
 
         // Default display text
         let displayText = "Kanbas";
@@ -57,31 +57,33 @@ function TopMenuBar({ courses = [] }: { courses: Course[] }) {
         const course = courses.find(course => location.pathname.includes(course._id));
         const courseNumber = course ? course.number : "Unknown Course";
 
-        switch (pathSegments[1].toLowerCase()) {
-            case 'dashboard':
-                displayText = "Dashboard";
-                break;
-            case 'courses':
-                if (pathSegments.length > 1) {
-                    // displayText = `${courseNumber} > ${pathSegments[3] ? pathSegments[3] : ''}`;
-                    displayText = courseNumber + " > " + pathSegments[3];
-                } else {
-                    displayText = "Courses";
-                }
-                break;
-            case 'account':
-                if (pathSegments.length > 3) {
-                    displayText = "Account > " + pathSegments[2] + " > " + pathSegments[3];
-                } else if (pathSegments.length > 1) {
-                    displayText = "Account > " + pathSegments[2];
-                } else {
-                    displayText = "Account";
-                }
-                break;
-            default:
-                // displayText = pathSegments[1] ? pathSegments[1] : "Kanbas";
-                displayText = pathSegments[1];
-                break;
+        if (pathSegments[1]) {
+            switch (pathSegments[1].toLowerCase()) {
+                case 'dashboard':
+                    displayText = "Dashboard";
+                    break;
+                case 'courses':
+                    if (pathSegments.length > 1) {
+                        // displayText = `${courseNumber} > ${pathSegments[3] ? pathSegments[3] : ''}`;
+                        displayText = courseNumber + " > " + pathSegments[3];
+                    } else {
+                        displayText = "Courses";
+                    }
+                    break;
+                case 'account':
+                    if (pathSegments.length > 3) {
+                        displayText = "Account > " + pathSegments[2] + " > " + pathSegments[3];
+                    } else if (pathSegments.length > 1) {
+                        displayText = "Account > " + pathSegments[2];
+                    } else {
+                        displayText = "Account";
+                    }
+                    break;
+                default:
+                    // displayText = pathSegments[1] ? pathSegments[1] : "Kanbas";
+                    displayText = pathSegments[1];
+                    break;
+            }
         }
 
         return displayText;
@@ -134,7 +136,7 @@ function TopMenuBar({ courses = [] }: { courses: Course[] }) {
                                 <hr />
                                 {isModalOpen && (
                                     <div className="modal-body pt-0" style={{ paddingBottom: '50px' }}>
-                                        <KanbasNavigation toggleModal={toggleModal} isModal={isModalOpen} />
+                                        <KanbasNavigation toggleModal={toggleModal} isModal={isModalOpen} modalStyle={isModalOpen} />
                                     </div>
                                 )}
                             </div>
